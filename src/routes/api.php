@@ -9,8 +9,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-Route::post('/register', [AuthController::class, 'register'])->name('register');
-Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
@@ -26,14 +26,15 @@ Route::middleware('auth:api')->group(function () {
 //     ]);
 // });
 
-
-Route::middleware(['auth:api', 'scopes:admin'])->get('/admin/dashboard', function() {
+Route::middleware(['auth:api', 'passport.scope:admin'])->get('/admin/dashboard', function () {
     return response()->json(['message' => 'Welcome, admin']);
 });
 
-Route::middleware(['auth:api', 'scopes:user'])->get('/dashboard', function() {
+Route::middleware(['auth:api', 'passport.scope:user'])->get('/dashboard', function () {
     return response()->json(['message' => 'Welcome, user']);
 });
+
+
 
 
 Route::get('/ping', function () {

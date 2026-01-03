@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Laravel\Passport\Http\Middleware\CheckToken;              // for all scopes
+use Laravel\Passport\Http\Middleware\CheckTokenForAnyScope;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -12,7 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'passport.scopes' => CheckToken::class,
+            'passport.scope'  => CheckTokenForAnyScope::class,
+        ]);
     })
     ->withProviders([
         App\Providers\AuthServiceProvider::class,
