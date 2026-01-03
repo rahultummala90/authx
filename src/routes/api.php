@@ -17,6 +17,15 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
+
+Route::middleware('auth:api')->get('/dashboard', function (Request $request) {
+    // TODO - Move this to controller when implementing dashboard features
+    return response()->json([
+        'message' => 'Welcome to your dashboard',
+        'user' => $request->user(),
+    ]);
+});
+
 Route::get('/ping', function () {
     return response()->json([
         'status' => 'ok',
