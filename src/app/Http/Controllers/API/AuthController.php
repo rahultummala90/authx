@@ -16,19 +16,25 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
+            'role' => 'nullable|string|in:user,admin', // optional role
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role ?? 'user', // default role
         ]);
 
-        $token = $user->createToken('authx-token')->accessToken;
+        // Assign token scopes based on role
+        $scopes = $user->role === 'admin' ? ['admin'] : ['user'];
+
+        $token = $user->createToken('authx-token', $scopes)->accessToken;
 
         return response()->json([
             'user' => $user,
             'token' => $token,
+            'scopes' => $scopes,
         ], 201);
     }
 
@@ -44,11 +50,16 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
-        $token = $user->createToken('authx-token')->accessToken;
+
+        // Assign token scopes based on role
+        $scopes = $user->role === 'admin' ? ['admin'] : ['user'];
+
+        $token = $user->createToken('authx-token', $scopes)->accessToken;
 
         return response()->json([
             'user' => $user,
             'token' => $token,
+            'scopes' => $scopes,
         ]);
     }
 
